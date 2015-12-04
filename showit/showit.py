@@ -213,13 +213,13 @@ def movie(array, file, cmap='gray', bar=False, nans=True, clim=None, size=7, tax
         Array axis that represent RGB color
 
     """
-    from matplotlib.pyplot import axis, colorbar, figure, gca, imshow
+    from matplotlib.pyplot import figure, imshow
     from matplotlib.animation import writers
     from os.path import abspath, expanduser
 
     array = asarray(array)
     file = abspath(expanduser(file))
-    
+
     if (nans is True) and (array.dtype != bool):
         array = nan_to_num(array)
 
