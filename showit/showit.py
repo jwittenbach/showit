@@ -1,4 +1,4 @@
-from numpy import ndarray, rollaxis, asarray, nan_to_num, ceil, sqrt
+from numpy import ndarray, rollaxis, asarray, nan_to_num, ceil, sqrt, transpose
 
 def tile(imgs, cmap='gray', bar=False, nans=True, clim=None, grid=None, size=9, axis=0, fig=None):
     """
@@ -176,3 +176,75 @@ def image(img, cmap='gray', bar=False, nans=True, clim=None, size=7, ax=None):
     axis('off')
 
     return im
+
+def movie(array, file, cmap='gray', bar=False, nans=True, clim=None, size=7, taxis=0, caxis=None):
+    """
+    Creation of a movie from an array using matplotlib.
+
+    Requires ffmpeg video encoder to be installed
+
+    Parameters
+    ----------
+    array : list or ndarray, 3D or 4D
+        The array to turn into a movie
+
+    file : basestring
+        String containing the path to the file to save the movie
+
+    cmap : str or Colormap, optional, default = 'gray'
+        A colormap to use, for non RGB images
+
+    bar : boolean, optional, default = False
+        Whether to append a colorbar
+
+    nans : boolean, optional, deafult = True
+        Whether to replace NaNs, if True, will replace with 0s
+
+    clim : tuple, optional, default = None
+        Limits for scaling image
+
+    size : scalar, optional, deafult = 9
+        Size of the figure
+
+    taxis: int, optional, default = 0
+        Array axis that represents time in the movie
+
+    caxis: int, option, default = None
+        Array axis that represent RGB color
+
+    """
+    from matplotlib.pyplot import axis, colorbar, figure, gca, imshow
+    from matplotlib.animation import writers
+    from os.path import abspath, expanduser
+
+    array = asarray(array)
+    file = abspath(expanduser(file))
+    
+    if (nans is True) and (array.dtype != bool):
+        array = nan_to_num(array)
+
+    if taxis != 0:
+        order = range(array.ndim)
+        order.remove(taxis)
+        order.insert(0, taxis)
+        array = transpose(array, order)
+
+    if caxis is not None:
+        order = range(array.ndim)
+        order.remove(caxis)
+        order.insert(len(order), caxis)
+
+    aspect = 1.0*array.shape[2]/array.shape[1]
+    fig = figure(figsize=(aspect*size, size))
+
+    im = imshow(array[0], cmap=cmap, clim=clim, interpolation='nearest')
+
+    def update(f):
+        im.set_array(array[f])
+
+    writer = writers['ffmpeg'](fps=15, bitrate=12000)
+
+    with writer.saving(fig, file, array.shape[0]):
+        for frame in xrange(array.shape[0]):
+            update(frame)
+            writer.grab_frame()
