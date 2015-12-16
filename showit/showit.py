@@ -237,16 +237,12 @@ def movie(array, filename, cmap='gray', bar=False, nans=True, clim=None, size=7,
     aspect = 1.0*array.shape[2]/array.shape[1]
     fig = figure(figsize=(aspect*size, size))
 
-    im = imshow(array[0], cmap=cmap, clim=clim, interpolation='nearest')
+    im = image(array[0], cmap=cmap, bar=bar, nans=nans, clim=clim, size=size)
 
     def update(f):
         im.set_array(array[f])
 
     writer = writers['ffmpeg'](fps=15, bitrate=12000)
 
-    # with writer.saving(fig, filename, array.shape[0]):
-    #     for frame in xrange(array.shape[0]):
-    #         update(frame)
-    #         writer.grab_frame()
-    anim = FuncAnimation(fig, update, frames=arr.shape[0], blit=False)
+    anim = FuncAnimation(fig, update, frames=array.shape[0], blit=False)
     anim.save(filename, writer)
