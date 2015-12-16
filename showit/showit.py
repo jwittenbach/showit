@@ -237,7 +237,7 @@ def movie(array, filename, cmap='gray', bar=False, nans=True, clim=None, size=7,
     aspect = 1.0*array.shape[2]/array.shape[1]
     fig = figure(figsize=(aspect*size, size))
 
-    im = image(array[0], cmap=cmap, bar=bar, nans=nans, clim=clim, size=size)
+    im = image(array[0], cmap=cmap, bar=bar, nans=nans, clim=clim, size=size, axis=fig.gca())
 
     def update(f):
         im.set_array(array[f])
