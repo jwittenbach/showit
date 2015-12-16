@@ -177,7 +177,7 @@ def image(img, cmap='gray', bar=False, nans=True, clim=None, size=7, ax=None):
 
     return im
 
-def movie(array, file, cmap='gray', bar=False, nans=True, clim=None, size=7, taxis=0, caxis=None):
+def movie(array, filename, cmap='gray', bar=False, nans=True, clim=None, size=7, taxis=0, caxis=None):
     """
     Creation of a movie from an array using matplotlib.
 
@@ -214,11 +214,11 @@ def movie(array, file, cmap='gray', bar=False, nans=True, clim=None, size=7, tax
 
     """
     from matplotlib.pyplot import figure, imshow
-    from matplotlib.animation import writers
+    from matplotlib.animation import writers, FuncAnimation
     from os.path import abspath, expanduser
 
     array = asarray(array)
-    file = abspath(expanduser(file))
+    filename = abspath(expanduser(filename))
 
     if (nans is True) and (array.dtype != bool):
         array = nan_to_num(array)
@@ -244,7 +244,9 @@ def movie(array, file, cmap='gray', bar=False, nans=True, clim=None, size=7, tax
 
     writer = writers['ffmpeg'](fps=15, bitrate=12000)
 
-    with writer.saving(fig, file, array.shape[0]):
-        for frame in xrange(array.shape[0]):
-            update(frame)
-            writer.grab_frame()
+    # with writer.saving(fig, filename, array.shape[0]):
+    #     for frame in xrange(array.shape[0]):
+    #         update(frame)
+    #         writer.grab_frame()
+    anim = FuncAnimation(fig, update, frames=arr.shape[0], blit=False)
+    anim.save(filename, writer)
