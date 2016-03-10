@@ -188,7 +188,7 @@ def movie(array, filename, cmap='gray', bar=False, nans=True, clim=None, size=7,
     array : list or ndarray, 3D or 4D
         The array to turn into a movie
 
-    file : basestring
+    filename : basestring
         String containing the path to the file to save the movie
 
     cmap : str or Colormap, optional, default = 'gray'
@@ -235,7 +235,7 @@ def movie(array, filename, cmap='gray', bar=False, nans=True, clim=None, size=7,
         order.insert(len(order), caxis)
 
     aspect = 1.0*array.shape[2]/array.shape[1]
-    fig = figure(figsize=(aspect*size, size))
+    fig = figure(figsize=(size, aspect*size))
 
     im = image(array[0], cmap=cmap, bar=bar, nans=nans, clim=clim, size=size, ax=fig.gca())
 
