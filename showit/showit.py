@@ -235,7 +235,8 @@ def movie(array, filename, cmap='gray', bar=False, nans=True, clim=None, size=7,
         order.insert(len(order), caxis)
 
     aspect = 1.0*array.shape[2]/array.shape[1]
-    fig = figure(figsize=(size, aspect*size))
+    fig = figure(figsize=(aspect*size, size))
+    fig.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=None, hspace=None)
 
     im = image(array[0], cmap=cmap, bar=bar, nans=nans, clim=clim, size=size, ax=fig.gca())
 
